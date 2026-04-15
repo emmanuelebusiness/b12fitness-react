@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================
+   GLOBAL — Noise texture + base reset
+   ============================================= */
+
+/* Film-grain noise overlay via SVG feTurbulence */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0B0B0B;
+  color: #F5F5F5;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* =============================================
+   SCROLLBAR custom
+   ============================================= */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: #0B0B0B; }
+::-webkit-scrollbar-thumb  { background: #1C241C; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #22E600; }
+
+/* =============================================
+   BUTTON — magnetic + sliding hover layer
+   ============================================= */
+@layer components {
+  .btn-primary {
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2
+           px-7 py-3.5 rounded-2xl font-sans font-semibold text-sm tracking-wide
+           bg-champagne text-obsidian border border-champagne
+           transition-transform duration-300;
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .btn-primary:hover {
+    transform: scale(1.03) translateY(-1px);
+  }
+  .btn-primary .btn-layer {
+    @apply absolute inset-0 bg-white/20 -translate-x-full;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .btn-primary:hover .btn-layer {
+    transform: translateX(0);
+  }
+
+  .btn-ghost {
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2
+           px-7 py-3.5 rounded-2xl font-sans font-semibold text-sm tracking-wide
+           bg-transparent text-ivory border border-ivory/20
+           transition-transform duration-300;
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .btn-ghost:hover {
+    @apply border-ivory/50;
+    transform: scale(1.03) translateY(-1px);
+  }
+
+  /* Nav link hover lift */
+  .nav-link {
+    @apply font-sans text-xs font-semibold tracking-widest uppercase
+           text-ivory/50 transition-all duration-200;
+  }
+  .nav-link:hover {
+    @apply text-ivory;
+    transform: translateY(-1px);
+  }
+
+  /* Section label */
+  .section-label {
+    @apply font-mono text-xs tracking-widest uppercase text-champagne;
+  }
+
+  /* Noise card surface */
+  .card-surface {
+    @apply bg-ardesia/60 border border-white/5 rounded-4xl backdrop-blur-sm;
+  }
+}
+
+/* =============================================
+   TYPEWRITER cursor blink
+   ============================================= */
+.cursor-blink {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: #22E600;
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* =============================================
+   PROTOCOLLO — stacking cards
+   ============================================= */
+.proto-card {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity, filter;
+}
+
+/* =============================================
+   ECG wave animation
+   ============================================= */
+.ecg-path {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: ecg-draw 2.5s linear infinite;
+}
+@keyframes ecg-draw {
+  0%   { stroke-dashoffset: 600; }
+  60%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -600; }
+}
+
+/* =============================================
+   PULSING dot
+   ============================================= */
+.pulse-dot {
+  @apply w-2 h-2 rounded-full inline-block;
+  background-color: #22E600;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,230,0,0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(34,230,0,0); }
+}
+
+/* =============================================
+   Elastic stagger for Shuffler
+   ============================================= */
+.shuffler-card {
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.4s ease;
+}
