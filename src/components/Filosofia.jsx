@@ -160,28 +160,14 @@ export default function Filosofia() {
     <section id="chi-siamo" ref={ref} className="bg-ardesia py-24 md:py-36">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
-        {/* Carousel */}
-        <div className="filo-carousel mb-16">
-          <Carousel />
-        </div>
+        {/* Titolo */}
+        <h2 className="filo-carousel font-sans font-black text-[clamp(1.8rem,3.5vw,3rem)] text-ivory leading-tight tracking-tight mb-10">
+          Dai un occhio a b12 fit club
+        </h2>
 
-        {/* Stats */}
-        <div className="filo-stats grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-white/8">
-          {[
-            { value: '2015', label: 'Anno di Fondazione' },
-            { value: '30+',  label: 'Anni di Esperienza' },
-            { value: '500+', label: 'Membri Attivi' },
-            { value: '100%', label: 'Istruttori Certificati CONI' },
-          ].map(({ value, label }) => (
-            <div key={label} className="filo-stat">
-              <div className="font-serif italic text-4xl md:text-5xl text-champagne leading-none mb-2">
-                {value}
-              </div>
-              <div className="font-mono text-[11px] text-ivory/35 uppercase tracking-widest leading-snug">
-                {label}
-              </div>
-            </div>
-          ))}
+        {/* Carousel */}
+        <div className="filo-carousel">
+          <Carousel />
         </div>
 
       </div>
