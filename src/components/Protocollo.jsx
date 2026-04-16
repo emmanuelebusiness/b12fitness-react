@@ -1,14 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useLang } from '../context/LanguageContext'
+import T from '../translations'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/* =============================================
-   SVG ANIMATIONS — one per card
-   ============================================= */
-
-// Card 1: Rotating concentric circles (Valutazione)
 function ConcentricCircles() {
   return (
     <svg viewBox="0 0 120 120" fill="none" className="w-full h-full opacity-60">
@@ -31,118 +28,62 @@ function ConcentricCircles() {
   )
 }
 
-// Card 2: Laser scan line across dot grid (Programma)
 function LaserGrid() {
   return (
     <svg viewBox="0 0 120 120" fill="none" className="w-full h-full opacity-70">
       <style>{`
-        .laser-line {
-          animation: laser-scan 2.5s ease-in-out infinite;
-        }
-        .laser-glow {
-          animation: laser-scan 2.5s ease-in-out infinite;
-          filter: blur(2px);
-          opacity: 0.4;
-        }
+        .laser-line { animation: laser-scan 2.5s ease-in-out infinite; }
+        .laser-glow { animation: laser-scan 2.5s ease-in-out infinite; filter: blur(2px); opacity: 0.4; }
         @keyframes laser-scan {
           0%   { transform: translateY(0px); opacity: 0; }
           10%  { opacity: 1; }
           90%  { opacity: 1; }
           100% { transform: translateY(96px); opacity: 0; }
         }
-        .dot-lit {
-          animation: dot-pulse 2.5s ease-in-out infinite;
-        }
+        .dot-lit { animation: dot-pulse 2.5s ease-in-out infinite; }
         @keyframes dot-pulse {
           0%, 100% { fill: rgba(34,230,0,0.15); }
           50%       { fill: rgba(34,230,0,0.7); }
         }
       `}</style>
-      {/* Dot grid */}
       {Array.from({ length: 7 }).map((_, row) =>
         Array.from({ length: 7 }).map((_, col) => (
-          <circle
-            key={`${row}-${col}`}
-            cx={12 + col * 16}
-            cy={12 + row * 16}
-            r="1.5"
-            className="dot-lit"
-            style={{ animationDelay: `${(row * 7 + col) * 0.05}s` }}
-          />
+          <circle key={`${row}-${col}`} cx={12 + col * 16} cy={12 + row * 16} r="1.5"
+                  className="dot-lit" style={{ animationDelay: `${(row * 7 + col) * 0.05}s` }} />
         ))
       )}
-      {/* Laser line */}
       <line x1="4" y1="12" x2="116" y2="12" stroke="#22E600" strokeWidth="1.5" className="laser-line"/>
       <line x1="4" y1="12" x2="116" y2="12" stroke="#22E600" strokeWidth="8" className="laser-glow"/>
     </svg>
   )
 }
 
-// Card 3: ECG heartbeat wave (Trasformazione)
 function ECGWave() {
   return (
     <svg viewBox="0 0 200 80" fill="none" className="w-full h-auto opacity-80">
-      <path
-        className="ecg-path"
-        d="M0 40 L30 40 L40 40 L50 10 L60 70 L70 40 L80 40 L90 40 L100 40 L110 40 L120 10 L130 70 L140 40 L150 40 L160 40 L170 40 L200 40"
-        stroke="#22E600"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M0 40 L30 40 L40 40 L50 10 L60 70 L70 40 L80 40 L90 40 L100 40 L110 40 L120 10 L130 70 L140 40 L150 40 L160 40 L170 40 L200 40"
-        stroke="rgba(34,230,0,0.15)"
-        strokeWidth="6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M0 40 L30 40 L40 40 L50 10 L60 70 L70 40 L80 40 L90 40 L100 40 L110 40 L120 10 L130 70 L140 40 L150 40 L160 40 L170 40 L200 40"
+            stroke="#22E600" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M0 40 L30 40 L40 40 L50 10 L60 70 L70 40 L80 40 L90 40 L100 40 L110 40 L120 10 L130 70 L140 40 L150 40 L160 40 L170 40 L200 40"
+            stroke="rgba(34,230,0,0.15)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
 
-/* =============================================
-   PROTOCOLLO DATA
-   ============================================= */
-const STEPS = [
-  {
-    num: '01',
-    label: 'Valutazione',
-    title: 'Ti conosciamo davvero.',
-    desc: 'Prima di allenarti, analizziamo la tua composizione corporea, i tuoi obiettivi e il tuo stile di vita. Nessun programma generico — solo dati reali.',
-    Viz: ConcentricCircles,
-    bg: 'from-ardesia to-obsidian',
-  },
-  {
-    num: '02',
-    label: 'Programma',
-    title: 'Un piano costruito su di te.',
-    desc: 'Il tuo programma settimanale su misura: combinazione di cardiofitness, pesi e flessibilità. Adattato ogni mese ai tuoi progressi.',
-    Viz: LaserGrid,
-    bg: 'from-[#0f180f] to-obsidian',
-  },
-  {
-    num: '03',
-    label: 'Trasformazione',
-    title: 'I risultati si misurano.',
-    desc: 'Monitoriamo ogni progresso con dati oggettivi. Ogni settimana sei più vicino alla versione di te che hai scelto di diventare.',
-    Viz: ECGWave,
-    bg: 'from-[#0c150c] to-obsidian',
-  },
-]
+const VIZS = [ConcentricCircles, LaserGrid, ECGWave]
+const BGS  = ['from-ardesia to-obsidian', 'from-[#0f180f] to-obsidian', 'from-[#0c150c] to-obsidian']
 
 export default function Protocollo() {
   const containerRef = useRef(null)
+  const { lang } = useLang()
+  const t = T[lang].protocollo
 
   useEffect(() => {
-    // Give browser time to layout
     const timeout = setTimeout(() => {
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray('.proto-inner')
 
         cards.forEach((card, i) => {
-          if (i === cards.length - 1) return // last card doesn't scale down
-
+          if (i === cards.length - 1) return
           ScrollTrigger.create({
             trigger: card.closest('.proto-card'),
             start: 'top top',
@@ -151,19 +92,15 @@ export default function Protocollo() {
             pinSpacing: false,
             onUpdate: (self) => {
               const progress = self.progress
-              const scale    = gsap.utils.interpolate(1, 0.92, progress)
-              const opacity  = gsap.utils.interpolate(1, 0.45, progress)
-              const blur     = gsap.utils.interpolate(0, 16, progress)
               gsap.set(card, {
-                scale,
-                opacity,
-                filter: `blur(${blur}px)`,
+                scale:   gsap.utils.interpolate(1, 0.92, progress),
+                opacity: gsap.utils.interpolate(1, 0.45, progress),
+                filter:  `blur(${gsap.utils.interpolate(0, 16, progress)}px)`,
               })
             },
           })
         })
 
-        // Slide-in content for each card
         cards.forEach((card) => {
           gsap.from(card.querySelectorAll('.proto-content-item'), {
             y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1,
@@ -174,34 +111,28 @@ export default function Protocollo() {
           })
         })
       }, containerRef)
-
       return () => ctx.revert()
     }, 100)
-
     return () => clearTimeout(timeout)
   }, [])
 
   return (
     <section id="protocollo" ref={containerRef} className="bg-obsidian">
-      {/* Section header — outside the sticky stack */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-24 md:pt-36 pb-8">
-        <span className="section-label block mb-3">Il Metodo</span>
+        <span className="section-label block mb-3">{t.sectionLabel}</span>
         <h2 className="font-sans font-black text-[clamp(2rem,4vw,3.5rem)] text-ivory leading-tight tracking-tight">
-          Tre passi per trasformarti.
+          {t.sectionTitle}
         </h2>
       </div>
 
-      {/* Stacking cards */}
-      {STEPS.map((step) => {
-        const { Viz } = step
+      {t.steps.map((step, i) => {
+        const Viz = VIZS[i]
         return (
           <div key={step.num} className="proto-card">
-            <div className={`proto-inner w-full h-screen bg-gradient-to-b ${step.bg}
+            <div className={`proto-inner w-full h-screen bg-gradient-to-b ${BGS[i]}
                              flex items-center justify-center px-6 md:px-12`}
                  style={{ willChange: 'transform, opacity, filter' }}>
               <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-
-                {/* Text side */}
                 <div className="flex flex-col gap-6">
                   <div className="proto-content-item flex items-center gap-4">
                     <span className="font-mono text-xs text-champagne/50 tracking-widest">{step.num}</span>
@@ -216,23 +147,19 @@ export default function Protocollo() {
                     {step.desc}
                   </p>
                 </div>
-
-                {/* Visualization side */}
                 <div className="proto-content-item hidden md:flex items-center justify-center">
                   <div className="w-72 h-72 md:w-80 md:h-80">
-                    {step.num === '03'
+                    {i === 2
                       ? <div className="w-full flex items-center"><Viz /></div>
                       : <Viz />}
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         )
       })}
 
-      {/* Spacer after sticky section */}
       <div className="h-24" />
     </section>
   )
